@@ -21,7 +21,4 @@ The code requires the following packages to be installed:
 
 How to use
 
-To use the code, run the script and select either Option 1 or Option 2. If you select Option 1, enter a desired compressive strength (MPa) when prompted. If you select Option 2, enter weights for each objective function separated by commas when prompted. The output values will be displayed in the corresponding text boxes.
-Note
-
-The code assumes that the input Excel file 'optimized_UHPC_all_objectives.xlsx' is located in the same directory as the script. If the file is located elsewhere, the path to the file should be updated in the script.
+To use the code, , simply execute the script in a Python environment that has the required packages installed. The GUI will open and the user can select either Option 1 or Option 2. The user will be prompted to enter either the desired compressive strength (Option 1) or weights for each objective function (Option 2). The output values will be displayed in the corresponding text boxes, and the two images will be displayed at the bottom of the GUI.
