@@ -19,13 +19,6 @@ The code requires the following packages to be installed:
     PySimpleGUI
     Pillow (PIL)
 
-Outputs
-
-The code also displays two images at the bottom of the GUI:
-
-    'fig.png': a plot showing the trade-off between the compressive strength and the environmental impact categories for the optimized UHPC mix.
-    'ALAMS1.png': a logo for the ALkali Activated Materials Society.
-
 How to use
 
 To use the code, run the script and select either Option 1 or Option 2. If you select Option 1, enter a desired compressive strength (MPa) when prompted. If you select Option 2, enter weights for each objective function separated by commas when prompted. The output values will be displayed in the corresponding text boxes.
