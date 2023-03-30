@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import pandas as pd
 import numpy as np
 import PySimpleGUI as sg
@@ -33,7 +27,6 @@ def get_option_1_values(fc_value):
 
 
 def get_option_2_values(weights):
-    # ... (the rest of the option_2 function)
     # Normalize the decision matrix
     normalized_df = dff2 / np.sqrt((dff2 ** 2).sum())
 
@@ -82,8 +75,6 @@ column_3 = output_columns[20:]  # select columns from "Photochemical Oxidant For
 output_layout_column_3 = [[sg.Text(column, size=(25, 1)), sg.Input(default_text="", key=f"-{column}-", size=(10, 1), disabled=True, border_width=1, justification='center')] for column in column_3]
 
 # output_layout.append([sg.Column(output_layout_column_1), sg.Column(output_layout_column_2), sg.Column(output_layout_column_3)])
-
-# Add titles for the three images
 
 # Open the images
 img1 = Image.open('ALAMS.png')
@@ -194,4 +185,3 @@ while True:
             sg.popup(str(e))
 
 window.close()
-
