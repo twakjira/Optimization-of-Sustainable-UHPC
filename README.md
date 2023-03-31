@@ -18,6 +18,8 @@ Requirements
 
 ### Predict 28-day Compressive Strength of UHPC
 Use "Predict 28-day Compressive Strength" button to predict the 28-day compressive strength of a given UHPC mix. For this purpose, enter the mixture content in m3/m3 of UHPC mixture.
+### Reset button
+Use "Reset" button to clear the field.
 
 ## Requirements
 
