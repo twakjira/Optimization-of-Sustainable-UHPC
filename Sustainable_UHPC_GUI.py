@@ -10,7 +10,8 @@ df = pd.read_excel('optimized_UHPC_all_objectives.xlsx')
 with open('model.pkl', 'rb') as file:
     model = pickle.load(file)
 
-dff1 = df[['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (Mpa)',
+dff1 = df[['C (m3/m3)', 'SF (m3/m3)', 'FA (m3/m3)', 'GBFS (m3/m3)', 'LP (m3/m3)',
+       'W (m3/m3)', 'SP (m3/m3)', 'QP (m3/m3)', 'MSA (m3/m3)', 'A (m3/m3)', 'fc (Mpa)',
        'Cost (USD)', 'Climate Change', 'Fossil Depletion',
        'Freshwater Ecotoxicity', 'Freshwater Eutrophication', 'Human Toxicity',
        'Ionising Radiation', 'Marine Ecotoxicity', 'Marine Eutrophication',
@@ -18,6 +19,7 @@ dff1 = df[['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (Mpa)
        'Particulate Matter Formation', 'Photochemical Oxidant Formation',
        'Terrestrial Acidification', 'Terrestrial Ecotoxicity',
        'Urban Land Occupation', 'Water Depletion']]
+
 
 # only objective functions
 dff2 = dff1[['fc (Mpa)',
@@ -58,7 +60,8 @@ def predict_fc_value(input_data):
     return denormalized_prediction, input_data
 
 def get_option_1_values(fc_value):
-    df.columns = ['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (MPa)'] + list(df.columns[11:])
+    df.columns = ['C (m3/m3)', 'SF (m3/m3)', 'FA (m3/m3)', 'GBFS (m3/m3)', 'LP (m3/m3)',
+       'W (m3/m3)', 'SP (m3/m3)', 'QP (m3/m3)', 'MSA (m3/m3)', 'A (m3/m3)', 'fc (MPa)'] + list(df.columns[11:])
     closest_row = df.iloc[(df['fc (MPa)']-fc_value).abs().argsort()[0]]
     default_values = closest_row.round(3)
     return default_values
@@ -101,14 +104,15 @@ def get_option_2_values(weights):
 output_layout = [    [sg.Text(f"Output:")],
 ]
 
-output_columns = ['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (MPa)', 'Cost (USD)', 'Climate Change', 'Fossil Depletion', 'Freshwater Ecotoxicity', 'Freshwater Eutrophication', 'Human Toxicity', 'Ionising Radiation', 'Marine Ecotoxicity', 'Marine Eutrophication', 'Metal Depletion', 'Natural Land Transformation', 'Ozone Depletion', 'Particulate Matter Formation', 'Photochemical Oxidant Formation', 'Terrestrial Acidification', 'Terrestrial Ecotoxicity', 'Urban Land Occupation', 'Water Depletion']
+output_columns = ['C (m3/m3)', 'SF (m3/m3)', 'FA (m3/m3)', 'GBFS (m3/m3)', 'LP (m3/m3)',
+       'W (m3/m3)', 'SP (m3/m3)', 'QP (m3/m3)', 'MSA (m3/m3)', 'A (m3/m3)', 'fc (MPa)', 'Cost (USD)', 'Climate Change', 'Fossil Depletion', 'Freshwater Ecotoxicity', 'Freshwater Eutrophication', 'Human Toxicity', 'Ionising Radiation', 'Marine Ecotoxicity', 'Marine Eutrophication', 'Metal Depletion', 'Natural Land Transformation', 'Ozone Depletion', 'Particulate Matter Formation', 'Photochemical Oxidant Formation', 'Terrestrial Acidification', 'Terrestrial Ecotoxicity', 'Urban Land Occupation', 'Water Depletion']
 
 # output_columns = ['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (MPa)']
 
 column_1 = output_columns[:10]
 column_2 = output_columns[10:20]
 
-output_layout_column_1 = [[sg.Text(column, size=(10, 1)), sg.Input(default_text="", key=f"-{column}-", size=(10, 1), disabled=True, border_width=1, justification='center')] for column in column_1]
+output_layout_column_1 = [[sg.Text(column, size=(12, 1)), sg.Input(default_text="", key=f"-{column}-", size=(10, 1), disabled=True, border_width=1, justification='center')] for column in column_1]
 output_layout_column_2 = [[sg.Text(column, size=(20, 1)), sg.Input(default_text="", key=f"-{column}-", size=(10, 1), disabled=True, border_width=1, justification='center')] for column in column_2]
 
 column_3 = output_columns[20:]  # select columns from "Photochemical Oxidant Formation" onwards
@@ -177,12 +181,12 @@ layout = [    [sg.Text("Choose an option:", font=("Helvetica", 12))],
              text_color='black', font=("Helvetica", 12))],     
 #     [sg.Button("Option 1", button_color=('white', 'gray')), sg.Button("Option 2", button_color=('white', 'gray'))],
     [sg.Button("Option 1", button_color=('white', 'gray')), sg.Button("Option 2", button_color=('white', 'gray')), 
-     sg.Button("Predict 28-day Compressive Strength", button_color=('white', 'gray'))],
+     sg.Button("Predict 28-day Compressive Strength", button_color=('white', 'gray')),
+     sg.Button("Reset", button_color=('white', 'gray'))],  # Add the Reset button
 
     [sg.Text("Enter desired fc value (MPa) for Option 1:", visible=False, font=("Helvetica", 14)), sg.Input(key="-FC_VALUE-", size=(10, 1), visible=False)],
     *output_layout
 ]
-
 
 
 window = sg.Window("Optimization of Sustainable UHPC", layout)
@@ -205,9 +209,13 @@ while True:
         except ValueError:
             sg.popup("Invalid fc value input. Please enter a number.")
 
+    elif event == "Reset":
+        for column in output_columns:
+            window[f"-{column}-"].update("")            
+            
     elif event == "Predict 28-day Compressive Strength":
         window['-FC_VALUE-'].update(visible=False)
-        input_data_text = sg.popup_get_text("Please enter the values for 'C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', separated by commas.")
+        input_data_text = sg.popup_get_text("Please enter the volumes of 'C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', separated by commas.")
         try:
             input_data = [float(x.strip()) for x in input_data_text.split(',')]
             if len(input_data) != 10:
@@ -220,7 +228,7 @@ while True:
                 window[f"-{column}-"].update(input_data[i])
 
             # Update the 'A' value in the window
-            window['-A-'].update(input_data[-1])
+            window['-A (m3/m3)-'].update(input_data[-1])
 
             # Update the fc (MPa) value in the window
             window['-fc (MPa)-'].update(fc_predicted)
