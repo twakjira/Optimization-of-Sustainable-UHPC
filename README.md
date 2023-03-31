@@ -30,6 +30,9 @@ To use this application, you must have the following dependencies installed:
     Pillow (PIL)
     openpyxl
     pickle
+    tensorflow
+    xgboost
+    scikit-learn
     
 You can install these dependencies using pip:
 pip install pysimplegui numpy pandas pillow openpyxl pickle5
