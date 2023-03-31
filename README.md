@@ -16,7 +16,7 @@ If the user selects Option 1, they will be prompted to enter a desired compressi
 If the user selects Option 2, they will be prompted to enter weights for each objective function, separated by commas. The program will then use these weights to determine the optimal mix using the Technique for Order of Preference by Similarity to Ideal Solution (TOPSIS) method. The output values are displayed in the corresponding text boxes.
 Requirements
 
-### Predict 28-day Compressive Strength
+### Predict 28-day Compressive Strength of UHPC
 Use "Predict 28-day Compressive Strength" button to predict the 28-day compressive strength of a given UHPC mix. For this purpose, enter the mixture content in m3/m3 of UHPC mixture.
 
 ## Requirements
