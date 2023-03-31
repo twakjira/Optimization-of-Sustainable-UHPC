@@ -3,11 +3,15 @@ import numpy as np
 import PySimpleGUI as sg
 from PIL import Image
 from PIL import ImageOps
+import pickle
 
 df = pd.read_excel('optimized_UHPC_all_objectives.xlsx')
 
-dff1 = df[['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA',
-       'A', 'fc (MPa)', 'Climate Change', 'Fossil Depletion',
+with open('model.pkl', 'rb') as file:
+    model = pickle.load(file)
+
+dff1 = df[['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (Mpa)',
+       'Cost (USD)', 'Climate Change', 'Fossil Depletion',
        'Freshwater Ecotoxicity', 'Freshwater Eutrophication', 'Human Toxicity',
        'Ionising Radiation', 'Marine Ecotoxicity', 'Marine Eutrophication',
        'Metal Depletion', 'Natural Land Transformation', 'Ozone Depletion',
@@ -16,8 +20,42 @@ dff1 = df[['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA',
        'Urban Land Occupation', 'Water Depletion']]
 
 # only objective functions
-dff2 = dff1.copy(deep=True)
+dff2 = dff1[['fc (Mpa)',
+       'Cost (USD)', 'Climate Change', 'Fossil Depletion',
+       'Freshwater Ecotoxicity', 'Freshwater Eutrophication', 'Human Toxicity',
+       'Ionising Radiation', 'Marine Ecotoxicity', 'Marine Eutrophication',
+       'Metal Depletion', 'Natural Land Transformation', 'Ozone Depletion',
+       'Particulate Matter Formation', 'Photochemical Oxidant Formation',
+       'Terrestrial Acidification', 'Terrestrial Ecotoxicity',
+       'Urban Land Occupation', 'Water Depletion']]
 
+
+min_max_values = {
+    'C': (0.06164037855, 0.6136507937),
+    'SF': (0, 0.2055688492),
+    'FA': (0, 0.2497716895),
+    'GBFS': (0, 0.2465517241),
+    'LP': (0, 0.1902560232),
+    'W': (0.04892065, 0.387),
+    'SP': (0.002571746051, 0.3047381132),
+    'QP': (0, 0.234811988),
+    'MSA': (0, 16000),
+    'A': (0, 0.6936381777),
+#     'fc (MPa)': (100.048, 241.462),
+}
+
+def normalize_input_data(input_data):
+    min_values = np.array([0.06164037855, 0, 0, 0, 0, 0.04892065, 0.002571746051, 0, 0, 0])
+    max_values = np.array([0.6136507937, 0.2055688492, 0.2497716895, 0.2465517241, 0.1902560232, 0.387, 0.3047381132, 0.234811988, 16000, 0.6936381777])
+    normalized_input_data = (input_data - min_values) / (max_values - min_values)
+    return normalized_input_data
+
+def predict_fc_value(input_data):
+    normalized_input_data = normalize_input_data(input_data)
+    X = np.array(normalized_input_data).reshape(1, -1)
+    prediction = model.predict(X)[0]
+    denormalized_prediction = 100.048 + (241.462 - 100.048) * prediction  # Denormalize the predicted value
+    return denormalized_prediction, input_data
 
 def get_option_1_values(fc_value):
     df.columns = ['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (MPa)'] + list(df.columns[11:])
@@ -63,7 +101,9 @@ def get_option_2_values(weights):
 output_layout = [    [sg.Text(f"Output:")],
 ]
 
-output_columns = ['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (MPa)', 'Climate Change', 'Fossil Depletion', 'Freshwater Ecotoxicity', 'Freshwater Eutrophication', 'Human Toxicity', 'Ionising Radiation', 'Marine Ecotoxicity', 'Marine Eutrophication', 'Metal Depletion', 'Natural Land Transformation', 'Ozone Depletion', 'Particulate Matter Formation', 'Photochemical Oxidant Formation', 'Terrestrial Acidification', 'Terrestrial Ecotoxicity', 'Urban Land Occupation', 'Water Depletion']
+output_columns = ['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (MPa)', 'Cost (USD)', 'Climate Change', 'Fossil Depletion', 'Freshwater Ecotoxicity', 'Freshwater Eutrophication', 'Human Toxicity', 'Ionising Radiation', 'Marine Ecotoxicity', 'Marine Eutrophication', 'Metal Depletion', 'Natural Land Transformation', 'Ozone Depletion', 'Particulate Matter Formation', 'Photochemical Oxidant Formation', 'Terrestrial Acidification', 'Terrestrial Ecotoxicity', 'Urban Land Occupation', 'Water Depletion']
+
+# output_columns = ['C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', 'fc (MPa)']
 
 column_1 = output_columns[:10]
 column_2 = output_columns[10:20]
@@ -135,8 +175,9 @@ layout = [    [sg.Text("Choose an option:", font=("Helvetica", 12))],
              text_color='black', font=("Helvetica", 12))],
     [sg.Text("Use Option 2 to assign weight to each objective function and determine optimimum mix using TOPSIS", 
              text_color='black', font=("Helvetica", 12))],     
-    [sg.Button("Option 1", button_color=('white', 'gray')), sg.Button("Option 2", button_color=('white', 'gray'))],
-
+#     [sg.Button("Option 1", button_color=('white', 'gray')), sg.Button("Option 2", button_color=('white', 'gray'))],
+    [sg.Button("Option 1", button_color=('white', 'gray')), sg.Button("Option 2", button_color=('white', 'gray')), 
+     sg.Button("Predict 28-day Compressive Strength", button_color=('white', 'gray'))],
 
     [sg.Text("Enter desired fc value (MPa) for Option 1:", visible=False, font=("Helvetica", 14)), sg.Input(key="-FC_VALUE-", size=(10, 1), visible=False)],
     *output_layout
@@ -164,6 +205,31 @@ while True:
         except ValueError:
             sg.popup("Invalid fc value input. Please enter a number.")
 
+    elif event == "Predict 28-day Compressive Strength":
+        window['-FC_VALUE-'].update(visible=False)
+        input_data_text = sg.popup_get_text("Please enter the values for 'C', 'SF', 'FA', 'GBFS', 'LP', 'W', 'SP', 'QP', 'MSA', 'A', separated by commas.")
+        try:
+            input_data = [float(x.strip()) for x in input_data_text.split(',')]
+            if len(input_data) != 10:
+                raise ValueError("Please provide exactly 10 values.")
+            fc_predicted, input_data = predict_fc_value(input_data)
+            sg.popup(f"The predicted fc (MPa) value is: {fc_predicted:.3f}")
+
+            # Update the window with the input data values
+            for i, column in enumerate(column_1[:-1]):  # Exclude the last column (fc (MPa))
+                window[f"-{column}-"].update(input_data[i])
+
+            # Update the 'A' value in the window
+            window['-A-'].update(input_data[-1])
+
+            # Update the fc (MPa) value in the window
+            window['-fc (MPa)-'].update(fc_predicted)
+
+
+        except ValueError as e:
+            sg.popup(str(e))
+        except Exception as e:
+            sg.popup(f"Error: {str(e)}")
 
 
     elif event == "Option 2":
@@ -179,7 +245,7 @@ while True:
             weights = np.array(weights) / np.sum(weights)
             output_values = get_option_2_values(weights)
             for column in output_columns:
-                 window[f"-{column}-"].update(output_values[0][output_columns.index(column)])
+                 window[f"-{column}-"].update(round(output_values[0][output_columns.index(column)], 6))
 
         except ValueError as e:
             sg.popup(str(e))
