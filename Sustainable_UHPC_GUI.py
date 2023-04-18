@@ -170,6 +170,7 @@ output_layout.append([sg.Column(output_layout_column_1), sg.Column(output_layout
 
 # output_layout.append([sg.Column(output_layout_column_1), sg.Column(output_layout_column_2)])
 # Add the image element at the bottom
+
 output_layout.append([sg.Image(filename='fig.png')])
 
 
@@ -189,7 +190,95 @@ layout = [    [sg.Text("Choose an option:", font=("Helvetica", 12))],
 ]
 
 
-window = sg.Window("Optimization of Sustainable UHPC", layout)
+
+
+
+
+# Open the images
+img1 = Image.open('image1.png')
+img2 = Image.open('image2.png')
+img3 = Image.open('image3.png')
+
+# Get the minimum width and height among the images
+widths = [img1.width, img2.width, img3.width]
+heights = [img1.height, img2.height, img3.height]
+min_width = min(widths)
+min_height = min(heights)
+
+# Resize the images to the minimum size
+img1 = ImageOps.fit(img1, (min_width, min_height))
+img2 = ImageOps.fit(img2, (min_width, min_height))
+img3 = ImageOps.fit(img3, (min_width, min_height))
+
+# Define the scale factor
+scale_factor = 0.4
+
+# Resize the images
+img1 = img1.resize((int(min_width * scale_factor), int(min_height * scale_factor)))
+img2 = img2.resize((int(min_width * scale_factor), int(min_height * scale_factor)))
+img3 = img3.resize((int(min_width * scale_factor), int(min_height * scale_factor)))
+
+# Save the resized images
+img1.save('image11.png')
+img2.save('image22.png')
+img3.save('image33.png')
+
+# To add figures in two columns
+fig1 = sg.Image(filename='image11.png', key='-fig1-', size=(min_width * scale_factor, min_height * scale_factor))
+fig2 = sg.Image(filename='image22.png', key='-fig2-', size=(min_width * scale_factor, min_height * scale_factor))
+fig3 = sg.Image(filename='image33.png', key='-fig3-', size=(min_width * scale_factor, min_height * scale_factor))
+
+
+
+# fig1_desc = sg.Text('Image 1')
+# fig2_desc = sg.Text('Image 2')
+layout += [[sg.Column([[sg.Text('Authors: Tadesse G. Wakjira, Adeeb A. Kutty, M. Shahria Alam')],
+                [sg.Text('Contact: tgwakjira@gmail.com,'+ '\n'
+                         '             www.tadessewakjira.com/Contact')],
+            ],
+            element_justification='left'
+        ),
+        sg.Column(
+            [   [fig1,
+                fig2,
+                fig3,],
+            ],
+            element_justification='center'
+        ),
+    ]
+]
+
+
+
+
+column_1 = [
+    ("                                         URL:", "https://github.com/twakjira/Optimization-of-Sustainable-UHPC"),
+]
+
+output_layout_column_1 = [
+    [
+        sg.Text(column, size=(24, 1)),
+        sg.Input(
+            default_text=value,
+            key=f"-{column}-",
+            size=(60, 2),
+            disabled=True,
+            border_width=1,
+            justification="center",
+            background_color="white",
+            text_color="black",
+            disabled_readonly_background_color="white",
+            disabled_readonly_text_color="black",
+        ) if value != "Authors:" and value != "Website:" else sg.Text(value, background_color="white", text_color="black"),
+    ]
+    for column, value in column_1
+]
+
+layout += output_layout_column_1
+
+
+
+window = sg.Window("FAI-OSUSCONCRET", layout)
 
 output_values = None
 
@@ -256,6 +345,6 @@ while True:
                  window[f"-{column}-"].update(round(output_values[0][output_columns.index(column)], 6))
 
         except ValueError as e:
-            sg.popup(str(e))
+            sg.popup(str(e))           
 
 window.close()
