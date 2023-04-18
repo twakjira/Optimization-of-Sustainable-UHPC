@@ -3,28 +3,27 @@
 # FAI-OSUSCONCRET
 ## Introduction
 
-This code is used to optimize the mix design of sustainable ultra-high-performance concrete (UHPC) based on either a desired compressive strength (Option 1) or weighted objective functions (Option 2).
+This code is used to optimize the mix design of environmentally sustainable and economical ultra-high-performance concrete (UHPC) based on either a desired compressive strength (Option 1) or weighted objective functions (Option 2). A total of 19 objective functions that comprehensively evalute the compressive strength, cost, and environmental impacts of the mix are optimized.
 
 The code reads data from an Excel file ('optimized_UHPC_all_objectives.xlsx') containing the input variables and objective functions. The user can choose between Option 1 and Option 2 by clicking on the corresponding button.
 
 ### Option 1
 
-If the user selects Option 1, they will be prompted to enter a desired compressive strength (MPa) for the UHPC mix. The code will then use this value to determine the optimized mix based on the closest row in the input data that matches the desired compressive strength. The output values are displayed in the corresponding text boxes.
+If the user selects Option 1 by clicking Option 1 button, then the user will be prompted to enter a desired compressive strength (MPa) for the UHPC mix. The software will then use this value to determine the optimized mix considering equal weight for each objective function. The output values are displayed in the corresponding text boxes in the screen.
 
 ### Option 2
 
-If the user selects Option 2, they will be prompted to enter weights for each objective function, separated by commas. The program will then use these weights to determine the optimal mix using the Technique for Order of Preference by Similarity to Ideal Solution (TOPSIS) method. The output values are displayed in the corresponding text boxes.
-Requirements
+If the user selects Option 2 by clicking Option 2 button, the user will be prompted to enter weights for each objective function, separated by commas (total of 19 objective functions). The software will then use these weights to determine the optimal mix using the Technique for Order of Preference by Similarity to Ideal Solution (TOPSIS) method. The output values are displayed in the corresponding text boxes.
 
 ### Predict 28-day Compressive Strength of UHPC
-Use "Predict 28-day Compressive Strength" button to predict the 28-day compressive strength of a given UHPC mix. For this purpose, enter the mixture content in m3/m3 of UHPC mixture.
+Use "Predict 28-day Compressive Strength" button to predict the 28-day compressive strength of a given UHPC mix. For this purpose, enter the mixture content in m3/m3 of UHPC mixture in the prompted window.
 
 ### Reset button
 Use "Reset" button to clear the field.
 
 ## Requirements
 
-To use this application, you must have the following dependencies installed:
+To use this application, the following dependencies should be installed:
 
     Python 3.6 or higher
     PySimpleGUI
@@ -37,8 +36,8 @@ To use this application, you must have the following dependencies installed:
     xgboost
     scikit-learn
     
-You can install these dependencies using pip:
-pip install pysimplegui numpy pandas pillow openpyxl pickle5
+These dependencies can be installed using pip:
+E.g., pip install pysimplegui in order to install pysimplegui
 
 ## How to Use
 
