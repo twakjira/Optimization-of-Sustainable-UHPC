@@ -50,7 +50,3 @@ E.g., pip install pysimplegui in order to install pysimplegui
 ## Contact
 
 For any inquiries or feedback, please contact the authors at tgwakjira@gmail.com and visit www.tadessewakjira.com/Contact.
-
-## Acknowledgements
-
-The application was developed by Abushanab A., Wakjira T., Alnahhal W., and Alam M.S. from the University of British Columbia Okanagan and Qatar University.
